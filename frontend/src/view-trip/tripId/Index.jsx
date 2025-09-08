@@ -5,6 +5,8 @@ import { useParams } from 'react-router'
 import { toast } from 'sonner'
 import InfoSection from '../components/InfoSection';
 import Hotels from '../components/Hotels';
+import PlacesToVisit from '../components/PlacesToVisit';
+import Footer from '../components/Footer';
 // import PlacesToVisit from '../components/PlacesToVisit';
 
 const Index = () =>  {
@@ -32,9 +34,14 @@ const Index = () =>  {
 
   return (
     <div className='p-10 md:px-20 lg:px-44 xl:px-56'>
+      {/* Information section */}
       <InfoSection trip={trip}/>
+      {/* hotels  */}
       <Hotels trip={trip}/>
-      {/* <PlacesToVisit trip={trip}/> */}
+      {/* places */}
+      <PlacesToVisit trip={trip}/>
+      {/* Foter */}
+      <Footer/>
     </div>
   )
 }

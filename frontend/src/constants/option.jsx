@@ -49,6 +49,66 @@ export const SelectBudgetOptions = [
     icon: '💎'
   }
 ]
+export const AI_PROMPT = (location, totalDays, travelers, budget) => `
+Generate a travel plan in STRICT JSON format only. 
+Do not include any explanation or extra text.
+Follow this schema:
 
-export const AI_PROMPT =
-  'Generate Travel Plan for location : {location}, for {totalDays} Days for {Traveler} with a {budget} budget, give me Hotels option list'
+{
+  "location": "${location}",
+  "totalDays": ${totalDays},
+  "travelers": "${travelers}",
+  "budget": "${budget}",
+  "itinerary": [
+    {
+      "day": "Day 1",
+      "plan": [
+        {
+          "time": "09:00 AM",
+          "placeName": "Mahakaleshwar Temple",
+          "placeDetails": "Famous Jyotirlinga temple in Ujjain",
+          "timeToTravel": "15 mins"
+        },
+        {
+          "time": "12:00 PM",
+          "placeName": "Ram Ghat",
+          "placeDetails": "Popular riverfront on Shipra river",
+          "timeToTravel": "10 mins"
+        }
+      ]
+    },
+    {
+      "day": "Day 2",
+      "plan": [
+        {
+          "time": "10:00 AM",
+          "placeName": "Kal Bhairav Temple",
+          "placeDetails": "Historic temple dedicated to Kal Bhairav",
+          "timeToTravel": "20 mins"
+        }
+      ]
+    }
+  ],
+  "hotels": [
+    {
+      "name": "Hotel Ashray",
+      "address": "Near Mahakaleshwar Temple, Ujjain, MP",
+      "price": "₹1500 - ₹2500 per night",
+      "rating": 4.3
+    },
+    {
+      "name": "Hotel Shanti Palace",
+      "address": "Freeganj, Ujjain, MP",
+      "price": "₹2000 - ₹3500 per night",
+      "rating": 4.5
+    }
+  ]
+}
+
+Return ONLY valid JSON. 
+Do not include \`\`\`json or \`\`\` or any explanation.
+`;
+
+
+
+

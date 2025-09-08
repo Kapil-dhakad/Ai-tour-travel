@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog"
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from '@react-oauth/google'
@@ -60,62 +59,73 @@ const About = () => {
     onError: (error) => console.log(error)
   })
 
-  const OnGenerateTrip = async () => {
-    const user = localStorage.getItem('user')
-    if (!user) {
-      setOpenDialog(true)   // ✅ agar login nahi hai to dialog open
-      return;
-    }
-
-    if (
-      !formData?.location ||
-      !formData?.days ||
-      !formData?.budget ||
-      !formData?.travelers
-    ) {
-      toast("Please fill all details")
-      return
-    }
-
-    const FINAL_PROMPT = AI_PROMPT
-      .replace('{location}', formData?.location?.name)
-      .replace('{totalDays}', formData?.days)
-      .replace('{Traveler}', formData?.travelers)
-      .replace('{budget}', formData?.budget)
-
-   
-
-    try {
-      setLoading(true)
-      const tripPlan = await generateTripPlan(FINAL_PROMPT)
-      console.log("AI Response:", tripPlan)
-      SaveAiTrip(tripPlan)
-      toast.success("Trip plan generated successfully!")
-    } catch (err) {
-      console.error(err)
-      toast.error("Failed to generate trip plan")
-    } finally {
-      setLoading(false)
-    }
+ const OnGenerateTrip = async () => {
+  const user = localStorage.getItem('user')
+  if (!user) {
+    setOpenDialog(true)
+    return;
   }
 
-  const SaveAiTrip = async (TripData) => {
+  if (
+    !formData?.location ||
+    !formData?.days ||
+    !formData?.budget ||
+    !formData?.travelers
+  ) {
+    toast("Please fill all details")
+    return
+  }
 
+  const FINAL_PROMPT = AI_PROMPT(
+    formData?.location?.name,
+    formData?.days,
+    formData?.travelers,
+    formData?.budget
+  );
+
+  try {
+    setLoading(true)
+
+    // 👇 AI Response
+    let tripPlan = await generateTripPlan(FINAL_PROMPT)
+
+    // ✅ Extra characters clean karna
+    tripPlan = tripPlan
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    // ✅ Parse as JSON
+    const parsedPlan = JSON.parse(tripPlan)
+
+    console.log("AI Response (Parsed):", parsedPlan)
+
+    SaveAiTrip(parsedPlan)
+    toast.success("Trip plan generated successfully!")
+  } catch (err) {
+    console.error("Parsing Error:", err)
+    toast.error("Failed to generate trip plan")
+  } finally {
+    setLoading(false)
+  }
+}
+
+
+  const SaveAiTrip = async (TripData) => {
     const user = JSON.parse(localStorage.getItem('user'))
     const docId = Date.now().toString()
 
-    navigate('/view-trip/'+docId)
-    
     await setDoc(doc(db, "AiTrips", docId), {
-     userSelection: formData,
-     tripData: TripData,
-     userEmail : user?.email,
-     id: docId
+      userSelection: formData,
+      tripData: TripData,   // ✅ ab object jayega
+      userEmail: user?.email,
+      id: docId
     });
+
+    navigate('/view-trip/' + docId)
     setLoading(false)
-    
   }
-  
+
   const getUserProfile = (tokenInfo) => {
     axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`, {
       headers: {
@@ -225,7 +235,7 @@ const About = () => {
       {/* Submit */}
       <div className='my-10 flex justify-end'>
         <Button onClick={OnGenerateTrip} disabled={loading}>
-          {loading ? <AiOutlineLoading3Quarters  className='h-7 w-7 animate-spin'/> : "Generate Trip"}
+          {loading ? <AiOutlineLoading3Quarters className='h-7 w-7 animate-spin' /> : "Generate Trip"}
         </Button>
       </div>
 
@@ -233,13 +243,12 @@ const About = () => {
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
         <DialogContent>
           <DialogHeader>
-
             <DialogDescription>
               <img src='/logo.svg' />
               <h2 className='font-bold text-lg mt-7'>Sign In with Google</h2>
-              <p>Sign in to the App with Google authentcation securley</p>
+              <p>Sign in to the App with Google authentication securely</p>
               <Button
-              disabled={loading}
+                disabled={loading}
                 onClick={login}
                 className='w-full mt-5 flex gap-4 items-center'
               > <FcGoogle />Sign in with Google</Button>
