@@ -111,20 +111,26 @@ const About = () => {
 }
 
 
-  const SaveAiTrip = async (TripData) => {
-    const user = JSON.parse(localStorage.getItem('user'))
-    const docId = Date.now().toString()
+ const SaveAiTrip = async (TripData) => {
+  const user = JSON.parse(localStorage.getItem('user'))
+  const docId = Date.now().toString()
 
-    await setDoc(doc(db, "AiTrips", docId), {
-      userSelection: formData,
-      tripData: TripData,   // ✅ ab object jayega
-      userEmail: user?.email,
-      id: docId
-    });
+  // Fire and forget saving data, don't await it
+  setDoc(doc(db, "AiTrips", docId), {
+    userSelection: formData,
+    tripData: TripData,
+    userEmail: user?.email,
+    id: docId
+  }).catch(err => {
+    console.error("Error saving trip data:", err)
+    toast.error("Failed to save trip data")
+  });
 
-    navigate('/view-trip/' + docId)
-    setLoading(false)
-  }
+  // Navigate immediately without waiting for setDoc to finish
+  navigate('/view-trip/' + docId);
+  setLoading(false);
+}
+
 
   const getUserProfile = (tokenInfo) => {
     axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${tokenInfo?.access_token}`, {

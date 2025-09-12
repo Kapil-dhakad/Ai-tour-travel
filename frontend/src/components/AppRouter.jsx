@@ -1,3 +1,4 @@
+import MyTrip from '@/my-trip/MyTrip'
 import About from '@/pages/About'
 import Home from '@/pages/Home'
 import Index from '@/view-trip/tripId'
@@ -8,8 +9,9 @@ const AppRouter = () => {
   return (
      <Routes>
       <Route path="/" element={<Home/>} />
-      <Route path="/about" element={<About/>} />
+      <Route path="/create-trip" element={<About/>} />
       <Route path='/view-trip/:tripId' element={<Index/>} />
+      <Route path='/my-trip' element={<MyTrip/>}/>
       
     </Routes>
   )

@@ -1,38 +1,34 @@
-import { GetPlaceDetails } from '@/services/GlobalApi';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react';
+import { GetCityImages } from '@/services/ImageApi';
 import { IoIosSend } from "react-icons/io";
 
-const InfoSection = ({trip}) => {
+const InfoSection = ({ trip }) => {
+  const [cityImage, setCityImage] = useState(null);
 
   useEffect(() => {
-   trip&&GetPlacePhoto()
-  }, [trip])
-  
-
-  const GetPlacePhoto=async()=>{
-    const data={
-      textQuery:trip?.userSelection?.location?.name
+    if (trip?.userSelection?.location?.name) {
+      GetCityImages(trip.userSelection.location.name).then(results => {
+        if (results.length > 0) {
+          setCityImage(results[0].urls.regular);
+        }
+      }).catch(() => {
+        setCityImage(null); // fallback if image fetch fails
+      });
     }
-    const result = await GetPlaceDetails(data).then(res=>{
-      console.log(res.data)
-    })
-  }
+  }, [trip]);
 
   return (
     <div>
       <img
         className='h-[340px] w-full object-cover rounded-xl'
-        src='/plane.png'
-        alt="trip-banner"
+        src={cityImage || '/plane.png'}
+        alt={trip?.userSelection?.location?.name || "trip-banner"}
       />
       <div className='flex justify-between items-center'>
         <div className='my-5 flex flex-col gap-2'>
-          {/* Destination */}
           <h2 className='font-bold text-2xl'>
             {trip?.userSelection?.location?.name}
           </h2>
-
-          {/* Chips */}
           <div className='flex gap-5 flex-wrap'>
             <h2 className='p-1 px-3 bg-gray-200 rounded-full text-gray-500 text-xs md:text-md'>
               📅 {trip?.userSelection?.days} Days
@@ -46,13 +42,12 @@ const InfoSection = ({trip}) => {
           </div>
         </div>
 
-        {/* Share Button */}
         <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
           <IoIosSend size={22} />
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default InfoSection
+export default InfoSection;
