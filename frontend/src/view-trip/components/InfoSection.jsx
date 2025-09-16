@@ -42,7 +42,7 @@ const InfoSection = ({ trip }) => {
           </div>
         </div>
 
-        <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
+        <button className="p-2 rounded-full text-white bg-gray-100 hover:text-gray-400">
           <IoIosSend size={22} />
         </button>
       </div>

@@ -59,11 +59,11 @@ const Header = () => {
   <div className='flex items-center gap-3'>
     {/* My Trip button without black bg */}
 
-<Button onClick={()=>navigate('/create-trip')} variant="outline" className="rounded-full text-white">
+<Button onClick={()=>navigate('/create-trip')} variant="outline" className="rounded-full hover:text-gray-300 text-white">
      + Create Trip
     </Button>
 
-    <Button onClick={()=>navigate('/my-trip')} variant="outline" className="rounded-full text-white">
+    <Button onClick={()=>navigate('/my-trip')} variant="outline" className="rounded-full hover:text-gray-300 text-white">
       My Trip
     </Button>
 
